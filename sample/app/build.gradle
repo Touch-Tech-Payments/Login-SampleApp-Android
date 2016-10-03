@@ -35,6 +35,8 @@ dependencies {
 
     compile "com.journeyapps:zxing-android-embedded:3.3.0"
 
+    compile "commons-codec:commons-codec:1.9"
+
     compile "com.jakewharton:butterknife:7.0.1"
 
     compile(name:'loginsdk', ext:'aar')

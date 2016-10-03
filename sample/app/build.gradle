@@ -1,4 +1,5 @@
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
+apply plugin: "realm-android"
 
 android {
     compileSdkVersion 24
@@ -35,9 +36,14 @@ dependencies {
 
     compile "com.journeyapps:zxing-android-embedded:3.3.0"
 
-    compile "commons-codec:commons-codec:1.9"
-
     compile "com.jakewharton:butterknife:7.0.1"
+
+    //Required for TTLogin
+    compile "io.reactivex:rxandroid:1.2.0"
+    compile "io.reactivex:rxjava:1.1.8"
+    compile "com.squareup.okhttp3:okhttp-ws:3.4.1"
+    compile "com.google.code.gson:gson:2.7"
+    compile "commons-codec:commons-codec:1.9"
 
     compile(name:'loginsdk', ext:'aar')
 

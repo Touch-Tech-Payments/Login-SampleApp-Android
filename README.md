@@ -7,6 +7,14 @@ For sample usage in an android app, please see the sample folder.
 ```
 dependencies {
     compile(name:'loginsdk', ext:'aar')
+
+    //Required for TTLogin - this is temporary
+    compile "io.reactivex:rxandroid:1.2.0"
+    compile "io.reactivex:rxjava:1.1.8"
+    compile "com.squareup.okhttp3:okhttp-ws:3.4.1"
+    compile "com.google.code.gson:gson:2.7"
+    compile "commons-codec:commons-codec:1.9"
+
 }
 
 repositories{

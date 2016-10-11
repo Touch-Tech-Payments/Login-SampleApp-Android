@@ -7,11 +7,14 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.touchtechpayments.loginsdk.TTLogin;
 import com.touchtechpayments.loginsdk.data.model.AuthPin;
@@ -19,8 +22,7 @@ import com.touchtechpayments.loginsdk.data.model.Method;
 import com.touchtechpayments.loginsdk.data.model.Token;
 import com.touchtechpayments.loginsdk.data.realm.TTLAccount;
 import com.touchtechpayments.loginsdk.interfaces.TTLoginCallback;
-
-import org.apache.commons.codec.binary.Base64;
+import com.touchtechpayments.loginsdk.interfaces.TTLoginRegFingerprintCallback;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
 
     @Bind(R.id.pin_editor)
     TextInputEditText pinEditor;
+
+    @Bind(R.id.fingerprint_checkbox)
+    CheckBox fingerprintCheckbox;
 
     @Bind(R.id.fabSend)
     FloatingActionButton fabSend;
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
         byte[] r = new byte[64];
         SecureRandom random = new SecureRandom();
         random.nextBytes(r);
-        String base64String = new String(Base64.encodeBase64(r)).substring(0, 64);
+        String base64String = Base64.encodeToString(r, Base64.DEFAULT).substring(0, 64);
         resultFromQRScanner = new Token(base64String);
 
         tokenEditor.setText(base64String);
@@ -79,15 +84,24 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
 
         try {
             fabSend.setClickable(false);
-
-            String pinInput = pinEditor.getText().toString();
-
-            TTLAccount ttlAccount = new TTLAccount(resultFromQRScanner, Method.PIN);
-            AuthPin authPin = new AuthPin(pinInput);
-
-            ttLogin.register(ttlAccount, authPin, this);
+            register();
         } catch (Exception e) {
             onError(e);
+        }
+    }
+
+    private void register(){
+        String pinInput = pinEditor.getText().toString();
+        AuthPin authPin = new AuthPin(pinInput);
+
+        if(fingerprintCheckbox.isChecked()){
+            TTLAccount ttlAccount = new TTLAccount(resultFromQRScanner, Method.FINGERPRINT);
+
+            checkFingerprint(ttlAccount, authPin);
+        } else {
+            TTLAccount ttlAccount = new TTLAccount(resultFromQRScanner, Method.PIN);
+
+            ttLogin.register(ttlAccount, authPin, this);
         }
     }
 
@@ -179,5 +193,27 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
         ttlAccounts.clear();
         ttlAccounts.addAll(Arrays.asList(ttLogin.getAccounts()));
         adapter.notifyDataSetChanged();
+    }
+
+    private void checkFingerprint(final TTLAccount ttlAccount, final AuthPin authPin){
+        Toast.makeText(this, "Please scan your fingerprint now...", Toast.LENGTH_LONG).show();
+        ttLogin.registerFingerprint(ttlAccount, authPin, new TTLoginRegFingerprintCallback() {
+            @Override
+            public void onError(Throwable e) {
+                MainActivity.this.onError(e);
+            }
+
+            @Override
+            public void onFail() {
+                Toast.makeText(MainActivity.this, "Fingerprint not recognized, try again!", Toast.LENGTH_LONG).show();
+                checkFingerprint(ttlAccount, authPin); //I would advise to check for 3 times max here
+            }
+
+            @Override
+            public void onSuccess() {
+                Toast.makeText(MainActivity.this, "Fingerprint recognized, please wait...", Toast.LENGTH_LONG).show();
+                ttLogin.register(ttlAccount, authPin, MainActivity.this);
+            }
+        });
     }
 }

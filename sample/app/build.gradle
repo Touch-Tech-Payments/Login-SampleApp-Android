@@ -41,6 +41,7 @@ dependencies {
     //Required for TTLogin
     compile "io.reactivex:rxandroid:1.2.0"
     compile "io.reactivex:rxjava:1.1.8"
+    compile "com.mtramin:rxfingerprint:1.1.1"
     compile "com.squareup.okhttp3:okhttp-ws:3.4.1"
     compile "com.google.code.gson:gson:2.7"
     compile "commons-codec:commons-codec:1.9"

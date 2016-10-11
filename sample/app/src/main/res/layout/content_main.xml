@@ -22,9 +22,8 @@
               android:maxLines="2"
               android:scrollbars="vertical"/>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:id="@+id/text_field_container"
+    <LinearLayout
+        android:id="@+id/text_field_container"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_gravity="center_vertical"
@@ -59,19 +58,25 @@
                     android:text="NO TOKEN, USE QR SCANNER"
                     android:imeOptions="actionDone"
                     android:inputType="phone"
-                    android:editable="false"
                     android:singleLine="true"/>
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="1.0">
+
+            <android.support.design.widget.TextInputLayout
                 android:id="@+id/pin_input_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5">
 
-            <android.support.design.widget.TextInputEditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/pin_editor"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
@@ -82,7 +87,17 @@
                     android:inputType="phone"
                     android:singleLine="true"/>
 
-        </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
+
+            <CheckBox
+                android:text="Use Fingerprint\n(if supported)"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/fingerprint_checkbox"
+                android:layout_weight="0.5" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

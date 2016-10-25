@@ -5,7 +5,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Base64;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,10 +15,9 @@ import com.touchtechpayments.loginsdk.data.model.AuthPin;
 import com.touchtechpayments.loginsdk.data.model.Method;
 import com.touchtechpayments.loginsdk.data.model.Token;
 import com.touchtechpayments.loginsdk.data.realm.TTLAccount;
-import com.touchtechpayments.loginsdk.interfaces.TTLoginAuthFingerprintCallback;
 import com.touchtechpayments.loginsdk.interfaces.TTLoginCallback;
+import com.touchtechpayments.loginsdk.interfaces.TTLoginFingerprintCallback;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -34,9 +32,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Bind(R.id.token_editor)
     TextInputEditText tokenEditor;
-
-    @Bind(R.id.pin_editor)
-    TextInputEditText pinEditor;
 
     @Bind(R.id.text_view)
     TextView status;
@@ -53,13 +48,11 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.qrcode_scanner)
     public void getToken(){
-        byte[] r = new byte[64];
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(r);
-        String base64String = Base64.encodeToString(r, Base64.DEFAULT).substring(0, 64);
-        resultFromQRScanner = new Token(base64String);
+        //Add QR Code Scanner here or paste a token below
+        String token = "c_fPyKhWHKlj5xrbxBLkN-9cL1mraymRaVwWGPmYwdz-rbNL5m4grbVR9Bm-njU7";
+        resultFromQRScanner = new Token(token);
 
-        tokenEditor.setText(base64String);
+        tokenEditor.setText(token);
     }
 
     @OnItemClick(R.id.listview)
@@ -74,9 +67,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if(ttlAccount.getMethod().equals(Method.FINGERPRINT.getServerFormat())){
             checkFingerprint(ttlAccount);
-        } else { //use PIN they have entered
-            AuthPin authPin = new AuthPin(pinEditor.getText().toString());
-            authenticate(ttlAccount, authPin);
+        } else {
+            Toast.makeText(LoginActivity.this, "Fallback here.", Toast.LENGTH_SHORT).show();
+            //TODO: Add Fallback here
         }
     }
 
@@ -125,22 +118,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkFingerprint(final TTLAccount ttlAccount){
-        Toast.makeText(this, "Please scan your fingerprint now...", Toast.LENGTH_LONG).show();
-        ttLogin.authenticateFingerprint(ttlAccount, new TTLoginAuthFingerprintCallback() {
+        Toast.makeText(this, "Please scan your fingerprint now...", Toast.LENGTH_SHORT).show();
+        ttLogin.authenticateFingerprint(ttlAccount, new TTLoginFingerprintCallback() {
             @Override
             public void onError(Throwable e) {
                 genericError(e);
             }
 
             @Override
-            public void onFail() {
-                Toast.makeText(LoginActivity.this, "Fingerprint not recognized, try again!", Toast.LENGTH_LONG).show();
-                checkFingerprint(ttlAccount); //I would advise to check for 3 times max here
+            public void onFallback() {
+                Toast.makeText(LoginActivity.this, "Fallback here. Tried 3 times.", Toast.LENGTH_SHORT).show();
+                //TODO: Add Fallback here
             }
 
             @Override
             public void onSuccess(AuthPin authPin) {
-                Toast.makeText(LoginActivity.this, "Fingerprint recognized, please wait...", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Fingerprint recognized, please wait...", Toast.LENGTH_SHORT).show();
                 authenticate(ttlAccount, authPin);
             }
         });

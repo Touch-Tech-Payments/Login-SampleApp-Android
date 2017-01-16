@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.qrcode_scanner)
     public void getToken(){
         //Add QR Code Scanner here or paste a token below
-        String token = "c_fPyKhWHKlj5xrbxBLkN-9cL1mraymRaVwWGPmYwdz-rbNL5m4grbVR9Bm-njU7";
+        String token = "5olfCqi5-s0tPGnv_v_MciO4DlJqQQxv_aqvMKqZRBhCrB_BTfORrPnhxQh4KuTY";
         resultFromQRScanner = new Token(token);
 
         tokenEditor.setText(token);
@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        TTLogin.setIsDev(true);
         ttLogin = new TTLogin(Constants.API_KEY, this);
 
         setupView();

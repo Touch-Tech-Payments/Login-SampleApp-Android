@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
     @OnClick(R.id.qrcode_scanner)
     public void getToken(){
         //Add QR Code Scanner here or paste a token below
-        String token = "D9WiZwVNr92wBU9FyMkCTrdsGUA_IqrCecaFp624r6GvHwgEnUCjYjde7zRSOvO5";
+        String token = "IaOiFTIKPVQU2HbevSYjQYhiBGWD0riHiZbH6LLyRjuYWSkX845fpWywDJid9Y8H";
         resultFromQRScanner = new Token(token);
 
         tokenEditor.setText(token);
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements TTLoginCallback {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        TTLogin.setIsDev(true);
         ttLogin = new TTLogin(Constants.API_KEY, this);
 
         setupView();
